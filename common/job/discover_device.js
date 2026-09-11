@@ -22,6 +22,8 @@ module.exports = {
         knownDevices = new Set();
         discoverList = [];
         discoveredDevices = [];
+        /** @type {Function|null} */
+        #boundIAmHandler = null;
 
         /**
          * Construct a DiscoverDeviceJob.
@@ -49,10 +51,17 @@ module.exports = {
         }
 
         async onStart() {
-            this.client.on(EVENT_I_AM, this.#iAmHandler.bind(this))
+            if (!this.#boundIAmHandler) {
+                this.#boundIAmHandler = this.#iAmHandler.bind(this);
+            }
+            // Idempotent: same bound reference so removeListener works; avoid duplicates on reuse
+            this.client.removeListener(EVENT_I_AM, this.#boundIAmHandler);
+            this.client.on(EVENT_I_AM, this.#boundIAmHandler);
         }
         async onStop() {
-            this.client.removeListener(EVENT_I_AM, this.#iAmHandler.bind(this))
+            if (this.#boundIAmHandler) {
+                this.client.removeListener(EVENT_I_AM, this.#boundIAmHandler);
+            }
         }
 
         async execute() {

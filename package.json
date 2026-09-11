@@ -36,7 +36,8 @@
       "discover device": "red-bacnet/discover_device.js",
       "discover point": "red-bacnet/discover_point.js",
       "read point": "red-bacnet/read_point.js",
-      "write point": "red-bacnet/write_point.js"
+      "write point": "red-bacnet/write_point.js",
+      "bacnet-device": "red-bacnet/bacnet_device.js"
     }
   },
   "dependencies": {

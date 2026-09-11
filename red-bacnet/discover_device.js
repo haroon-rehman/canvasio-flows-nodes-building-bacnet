@@ -87,7 +87,10 @@ module.exports = function (RED) {
 
             // @ts-ignore
             this.on(EVENT_CLOSE, () => {
+                const { removeJob } = require('@root/common/job/global_queue_manager.js');
+                removeJob(this.jobId);
                 this.task.onStop();
+                this.#eventEmitter.removeAllListeners();
             })
 
             this.#eventEmitter.on(EVENT_OUTPUT, (msg) => {

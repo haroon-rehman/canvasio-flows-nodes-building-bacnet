@@ -86,7 +86,7 @@ module.exports = {
      * Initialize queue (Node-RED startup hook).
      */
     async initialize() {
-        this.getQueue();
+        module.exports.getQueue();
     },
 
     /**
@@ -107,6 +107,33 @@ module.exports = {
      */
     async reset() {
         await teardown();
-        this.getQueue();
+        module.exports.getQueue();
+    },
+
+    /**
+     * Remove a pending job by id from the active queue (if any).
+     * Does not shut down the worker — safe when other nodes still use the queue.
+     *
+     * @param {string|number} id
+     * @returns {boolean}
+     */
+    removeJob(id) {
+        if (!globalQueue) {
+            return false;
+        }
+        return globalQueue.removeJob(id);
+    },
+
+    /**
+     * Clear pending jobs without shutting down the worker.
+     * Used on redeploy/close of nodes that enqueue work.
+     *
+     * @returns {number}
+     */
+    clearPending() {
+        if (!globalQueue) {
+            return 0;
+        }
+        return globalQueue.clearPending();
     },
 };

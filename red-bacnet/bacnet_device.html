@@ -1,0 +1,139 @@
+<script type="text/javascript">
+    RED.nodes.registerType('bacnet-device', {
+        category: 'Building · BACnet/IP',
+        paletteLabel: 'BACnet Device',
+        color: '#7bb0ff',
+        defaults: {
+            name: { value: '' },
+            client: { type: 'bacnet client', required: true },
+            ip: { value: '', required: true },
+            points: { value: [] }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: 'hal-systems.png',
+        label: function () {
+            return this.name || this.ip || 'BACnet Device';
+        },
+        oneditprepare: function () {
+            const list = $('#node-input-points-container');
+
+            list.editableList({
+                addItem: function (container, index, data) {
+                    data = data || {};
+
+                    $('<input/>', {
+                        class: 'node-input-point-name',
+                        type: 'text',
+                        placeholder: 'Name',
+                        style: 'width:22%; margin-right:4px;'
+                    }).val(data.name || '').appendTo(container);
+
+                    $('<input/>', {
+                        class: 'node-input-point-type',
+                        type: 'number',
+                        placeholder: 'Type',
+                        style: 'width:14%; margin-right:4px;'
+                    }).val(data.type != null ? data.type : '').appendTo(container);
+
+                    $('<input/>', {
+                        class: 'node-input-point-instance',
+                        type: 'number',
+                        placeholder: 'Instance',
+                        style: 'width:18%; margin-right:4px;'
+                    }).val(data.instance != null ? data.instance : '').appendTo(container);
+
+                    $('<input/>', {
+                        class: 'node-input-point-property',
+                        type: 'number',
+                        placeholder: 'Property',
+                        style: 'width:18%;'
+                    }).val(data.property != null ? data.property : 85).appendTo(container);
+                },
+                removable: true,
+                sortable: true
+            });
+
+            (this.points || []).forEach(function (point) {
+                list.editableList('addItem', point);
+            });
+        },
+        oneditsave: function () {
+            const points = [];
+            const seen = {};
+
+            $('#node-input-points-container').editableList('items').each(function () {
+                const row = $(this);
+                const name = (row.find('.node-input-point-name').val() || '').trim();
+                const typeRaw = row.find('.node-input-point-type').val();
+                const instanceRaw = row.find('.node-input-point-instance').val();
+                const propertyRaw = row.find('.node-input-point-property').val();
+
+                const type = parseInt(typeRaw, 10);
+                const instance = parseInt(instanceRaw, 10);
+                let property = parseInt(propertyRaw, 10);
+                if (!Number.isFinite(property)) {
+                    property = 85;
+                }
+
+                if (!name || !Number.isFinite(type) || !Number.isFinite(instance)) {
+                    return;
+                }
+                if (seen[name]) {
+                    return;
+                }
+                seen[name] = true;
+
+                points.push({
+                    name: name,
+                    type: type,
+                    instance: instance,
+                    property: property
+                });
+            });
+
+            this.points = points;
+        }
+    });
+</script>
+
+<script type="text/html" data-template-name="bacnet-device">
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row">
+        <label for="node-input-client"><i class="fa fa-sitemap"></i> Network</label>
+        <input type="text" id="node-input-client">
+    </div>
+    <div class="form-row">
+        <label for="node-input-ip"><i class="fa fa-globe"></i> Device IP</label>
+        <input type="text" id="node-input-ip" placeholder="192.168.1.100">
+    </div>
+    <div class="form-row">
+        <label><i class="fa fa-list"></i> Points</label>
+    </div>
+    <div class="form-row node-input-points-container-row">
+        <ol id="node-input-points-container"></ol>
+    </div>
+</script>
+
+<script type="text/html" data-help-name="bacnet-device">
+    <p>Read a configured list of BACnet points from one device via a shared BACnet Network.</p>
+    <h3>Inputs</h3>
+    <dl class="message-properties">
+        <dt>trigger</dt>
+        <dd>Any message triggers a read of all configured points. Payload is not inspected.</dd>
+    </dl>
+    <h3>Outputs</h3>
+    <dl class="message-properties">
+        <dt>payload <span class="property-type">object</span></dt>
+        <dd>Map of point name to value. Failed points are <code>null</code>.</dd>
+        <dt>device <span class="property-type">string</span></dt>
+        <dd>Configured device IP/address.</dd>
+        <dt>timestamp <span class="property-type">number</span></dt>
+        <dd>Unix epoch milliseconds when the read completed.</dd>
+    </dl>
+    <h3>Details</h3>
+    <p>Requires a BACnet Network (<code>bacnet client</code>) config node. Writes remain on BACnet Write.</p>
+</script>

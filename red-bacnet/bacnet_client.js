@@ -7,6 +7,8 @@ const { EVENT_CLOSE } = require('@root/common/core/constant.js')
 
 module.exports = function (RED) {
     class BacnetClient {
+        #closed = false;
+
         constructor(config) {
             RED.nodes.createNode(this, config);
 
@@ -36,9 +38,25 @@ module.exports = function (RED) {
             // close client on node red stop / redeploy
             // @ts-ignore
             this.on(EVENT_CLOSE, () => {
-                print('Stopping BACnet Client', true);
-                this.instance.close();
+                this.#closeClient();
             })
+        }
+
+        #closeClient() {
+            if (this.#closed) {
+                return;
+            }
+            this.#closed = true;
+            print('Stopping BACnet Client', true);
+            if (this.instance && typeof this.instance.close === 'function') {
+                try {
+                    this.instance.close();
+                } catch (error) {
+                    // @ts-ignore
+                    this.warn(`Error closing BACnet Client ${this.name}. ${error}`);
+                }
+            }
+            this.instance = null;
         }
     }
 

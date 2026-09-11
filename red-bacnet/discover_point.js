@@ -9,7 +9,7 @@ const { DiscoverPointJob } = require('@root/common/job/discover_point.js')
 const { getQueue } = require('@root/common/job/global_queue_manager.js')
 const { generateUniqueJobId } = require('@root/common/func.js')
 const {
-    EVENT_UPDATE_STATUS, EVENT_ERROR, EVENT_INPUT, EVENT_OUTPUT
+    EVENT_UPDATE_STATUS, EVENT_ERROR, EVENT_INPUT, EVENT_OUTPUT, EVENT_CLOSE
 } = require('@root/common/core/constant.js')
 
 // -------------------------------- functions --------------------------------
@@ -65,6 +65,13 @@ module.exports = function (RED) {
                 });
                 // @ts-ignore
                 this.status({ fill: 'yellow', shape: 'dot', text: `in queue` });
+            });
+
+            // @ts-ignore
+            this.on(EVENT_CLOSE, () => {
+                const { removeJob } = require('@root/common/job/global_queue_manager.js');
+                removeJob(this.jobId);
+                this.#eventEmitter.removeAllListeners();
             });
 
             this.#eventEmitter.on(EVENT_OUTPUT, (msg) => {

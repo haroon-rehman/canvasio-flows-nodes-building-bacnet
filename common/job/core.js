@@ -206,6 +206,30 @@ class CoalescedJobQueue {
     }
 
     /**
+     * Removes a pending job by id without stopping the worker.
+     *
+     * @param {string|number} id - Job id to remove.
+     * @returns {boolean} True if a job was removed.
+     */
+    removeJob(id) {
+        const before = this.queue.length;
+        this.queue = this.queue.filter((job) => job.id !== id);
+        return this.queue.length !== before;
+    }
+
+    /**
+     * Clears all pending jobs without stopping the worker.
+     * In-flight execute() calls are not cancelled.
+     *
+     * @returns {number} Number of pending jobs cleared.
+     */
+    clearPending() {
+        const count = this.queue.length;
+        this.queue = [];
+        return count;
+    }
+
+    /**
      * Stops the job queue process.
      *
      * Sets isRunning to false, which will cause the run() loop to exit after the current
