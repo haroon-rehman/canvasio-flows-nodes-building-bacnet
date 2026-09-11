@@ -11,7 +11,7 @@ Canvas IO Workflows — maintained integration/fork of an independent Node-RED n
 | Palette category (operational) | `Canvas IO` |
 | Config nodes | remain `category: "config"` |
 | Local repository | `cio-wfs-nodes/cio-wfs-node-building-bacnet` |
-| npm package name | `@halsystems/red-bacnet` (unchanged) |
+| npm package name | `@canvasio/node-building-bacnet` (`2.2.0-canvasio.1`); upstream `@halsystems/red-bacnet` `2.2.0` |
 
 `cio-wfs-nodes` is an organizational parent only — not a monorepo. One node package = one Git repository.
 

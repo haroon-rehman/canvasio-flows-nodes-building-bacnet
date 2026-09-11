@@ -1,6 +1,6 @@
 {
-  "name": "@halsystems/red-bacnet",
-  "version": "2.2.0",
+  "name": "@canvasio/node-building-bacnet",
+  "version": "2.2.0-canvasio.1",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
