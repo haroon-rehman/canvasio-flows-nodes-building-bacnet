@@ -21,10 +21,14 @@
     "bacnet",
     "bms",
     "iot",
-    "building-automation"
+    "building-automation",
+    "canvasio"
   ],
   "author": "Hal Systems",
   "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
   "node-red": {
     "version": ">=3.0.0",
     "nodes": {
