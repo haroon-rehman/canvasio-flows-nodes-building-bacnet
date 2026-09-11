@@ -1,6 +1,7 @@
 <script type="text/javascript">
     RED.nodes.registerType('write point', {
         category: 'Building · BACnet/IP',
+    paletteLabel: 'BACnet Write',
         color: '#b5e6ff',
         defaults: {
             name: { value: "" },
@@ -14,7 +15,7 @@
         icon: "hal-systems.png",
 
         label: function () {
-            return this.name || "write point";
+            return this.name || "BACnet Write";
         }
     });
 </script>

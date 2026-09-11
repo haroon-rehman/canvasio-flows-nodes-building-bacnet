@@ -1,6 +1,7 @@
 <script type="text/javascript">
     RED.nodes.registerType('discover device', {
         category: 'Building · BACnet/IP',
+    paletteLabel: 'BACnet Discover',
         color: '#b5e6ff',
         defaults: {
             name: { value: "" },
@@ -15,7 +16,7 @@
         icon: "hal-systems.png",
 
         label: function () {
-            return this.name || "discover device";
+            return this.name || "BACnet Discover";
         }
     });
 </script>

@@ -1,6 +1,7 @@
 <script type="text/javascript">
     RED.nodes.registerType('discover point', {
         category: 'Building · BACnet/IP',
+    paletteLabel: 'BACnet Discover Points',
         color: '#b5e6ff',
         defaults: {
             name: { value: "" },
@@ -16,7 +17,7 @@
         icon: "hal-systems.png",
 
         label: function () {
-            return this.name || "discover point";
+            return this.name || "BACnet Discover Points";
         }
     });
 </script>
